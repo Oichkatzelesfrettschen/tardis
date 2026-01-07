@@ -59,8 +59,10 @@ jobs:
           sparse-checkout: ${{ inputs.atom-data-sparse == true && 'atom_data/kurucz_cd23_chianti_H_He_latest.h5' || '' }}
 
       - name: Create LFS file list
+        env:
+          ATOM_DATA_SPARSE: ${{ inputs.atom-data-sparse }}
         run: |
-          if [ "${{ inputs.atom-data-sparse }}" == "true" ]; then
+          if [ "$ATOM_DATA_SPARSE" = "true" ]; then
             echo "Using atom data sparse checkout"
             echo "atom_data/kurucz_cd23_chianti_H_He_latest.h5" > .lfs-files-list
           else
@@ -111,4 +113,3 @@ jobs:
         with:
           path: tardis-regression-data/.git/lfs
           key: tardis-regression-${{ inputs.atom-data-sparse == true && 'atom-data-sparse' || 'full-data' }}-${{ hashFiles('tardis-regression-data/.lfs-files-list') }}-${{ inputs.regression-data-repo }}-v1
-

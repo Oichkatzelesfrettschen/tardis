@@ -117,6 +117,8 @@ lint.ignore = [
     "PLR5501",  # collapsible-else-if
     "PLW0603",  # global-statement
     "PLW2901",  # redefined-loop-name
+    # Local imports are allowed in performance/optional-dep sensitive entrypoints.
+    "PLC0415",
 
     # flake8-pytest-style (PT)
     "PT001",   # pytest-fixture-incorrect-parentheses-style
@@ -218,4 +220,3 @@ lint.unfixable = [
 
 [lint.extend-per-file-ignores]
 "docs/*" = []
-

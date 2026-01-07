@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import yaml
 from astropy.units.quantity import Quantity
@@ -71,9 +71,12 @@ def extend_with_default(
 
         yield from validate_properties(validator, properties, instance, schema)
 
-    return validators.extend(
-        validator_class,
-        {"properties": set_defaults},
+    return cast(
+        "type[Draft7Validator]",
+        validators.extend(
+            validator_class,
+            {"properties": set_defaults},
+        ),
     )
 
 

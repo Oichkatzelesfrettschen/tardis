@@ -1,7 +1,7 @@
 import logging
 
 DEBUG_MODE = False
-LOG_FILE = False
+LOG_FILE: str | None = None
 BUFFER = 1
 ticker = 1
 
@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.handlers = []
 
-if LOG_FILE:
+console_handler: logging.Handler
+if LOG_FILE is not None:
     logger.propagate = False
     console_handler = logging.FileHandler(LOG_FILE)
 else:
@@ -59,8 +60,8 @@ def log_decorator(func):
             global ticker
             ticker += 1
             if ticker % BUFFER == 0:  # without a buffer, performance suffers
-                logger.debug(f"Func: {func.__name__}. Input: {(args, kwargs)}")
-                logger.debug(f"Output: {result}.")
+                logger.debug("Func: %s. Input: %s", func.__name__, (args, kwargs))
+                logger.debug("Output: %s.", result)
         return result
 
     return wrapper

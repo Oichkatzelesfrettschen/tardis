@@ -73,6 +73,8 @@ def run_tardis(
     -----
     Please see the `logging tutorial <https://tardis-sn.github.io/tardis/io/optional/logging_configuration.html>`_ to know more about `log_level` and `specific` options.
     """
+    # Local imports are intentional to avoid importing heavyweight optional
+    # dependencies (e.g. Jupyter/Panel logging) during module import.
     from tardis.io.atom_data.base import AtomData
     from tardis.io.configuration.config_reader import Configuration
     from tardis.io.logger.logger import logging_state

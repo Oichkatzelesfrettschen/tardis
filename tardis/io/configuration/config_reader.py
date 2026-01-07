@@ -7,8 +7,8 @@ import pandas as pd
 import yaml
 from astropy import units as u
 
-from tardis.io.hdf_writer_mixin import HDFWriterMixin
 from tardis.io.configuration import config_validator
+from tardis.io.hdf_writer_mixin import HDFWriterMixin
 from tardis.io.model.readers.csvy import load_yaml_from_csvy
 from tardis.io.util import YAMLLoader, yaml_load_file
 
@@ -50,9 +50,9 @@ class ConfigurationNameSpace(dict):
         """
         try:
             yaml_dict = yaml_load_file(fname)
-        except OSError as e:
-            logger.critical(f"No config file named: {fname}")
-            raise e
+        except OSError:
+            logger.critical("No config file named: %s", fname)
+            raise
 
         return cls.from_config_dict(yaml_dict)
 
@@ -115,8 +115,7 @@ class ConfigurationNameSpace(dict):
     def __getattr__(self, item):
         if item in self:
             return self[item]
-        else:
-            super().__getattribute__(item)
+        super().__getattribute__(item)
 
     __setattr__ = __setitem__
 
@@ -139,19 +138,17 @@ class ConfigurationNameSpace(dict):
 
             if config_item.startswith("item"):
                 return self[config_item_path[0]]
-            else:
-                return self[config_item]
-        elif len(config_item_path) == 2 and config_item_path[1].startswith(
+            return self[config_item]
+        if len(config_item_path) == 2 and config_item_path[1].startswith(
             "item"
         ):
             return self[config_item_path[0]][
                 int(config_item_path[1].replace("item", ""))
             ]
 
-        else:
-            return self[config_item_path[0]].get_config_item(
-                ".".join(config_item_path[1:])
-            )
+        return self[config_item_path[0]].get_config_item(
+            ".".join(config_item_path[1:])
+        )
 
     def set_config_item(self, config_item_string, value):
         """
@@ -215,9 +212,9 @@ class Configuration(ConfigurationNameSpace, ConfigWriterMixin):
             yaml_dict = yaml_load_file(
                 fname, loader=kwargs.pop("loader", YAMLLoader)
             )
-        except OSError as e:
-            logger.critical(f"No config file named: {fname}")
-            raise e
+        except OSError:
+            logger.critical("No config file named: %s", fname)
+            raise
 
         tardis_config_version = yaml_dict.get("tardis_config_version", None)
         if tardis_config_version != "v1.0":

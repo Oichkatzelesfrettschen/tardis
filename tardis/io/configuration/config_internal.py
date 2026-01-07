@@ -5,9 +5,9 @@ from pathlib import Path
 import yaml
 from astropy.config import get_config_dir
 
-from tardis import __path__ as TARDIS_PATH
+from tardis import __path__ as tardis_path
 
-TARDIS_PATH = Path(TARDIS_PATH[0])
+TARDIS_PATH = Path(tardis_path[0])
 DEFAULT_CONFIG_PATH = (
     TARDIS_PATH / "data" / "default_tardis_internal_config.yml"
 )
@@ -21,7 +21,8 @@ def get_internal_configuration():
     config_fpath = Path(get_config_dir()) / "tardis_internal_config.yml"
     if not config_fpath.exists():
         logger.warning(
-            f"Configuration File {config_fpath} does not exist - creating new one from default"
+            "Configuration file %s does not exist - creating new one from default",
+            config_fpath,
         )
         shutil.copy(DEFAULT_CONFIG_PATH, config_fpath)
     with open(config_fpath) as config_fh:
@@ -33,12 +34,19 @@ def get_data_dir():
     data_dir = config.get("data_dir", None)
     if data_dir is None:
         config_fpath = Path(get_config_dir()) / "tardis_internal_config.yml"
-        logging.critical(
-            f"\n{'*' * 80}\n\nTARDIS will download different kinds of data (e.g. atomic) to its data directory {DEFAULT_DATA_DIR}\n\n"
-            f"TARDIS DATA DIRECTORY not specified in {config_fpath}:\n\n"
-            f"ASSUMING DEFAULT DATA DIRECTORY {DEFAULT_DATA_DIR}\n "
-            f"YOU CAN CHANGE THIS AT ANY TIME IN {config_fpath} \n\n"
-            f"{'*' * 80} \n\n"
+        logger.critical(
+            "\n%s\n\n"
+            "TARDIS will download different kinds of data (e.g. atomic) to its data directory %s\n\n"
+            "TARDIS DATA DIRECTORY not specified in %s:\n\n"
+            "ASSUMING DEFAULT DATA DIRECTORY %s\n"
+            "YOU CAN CHANGE THIS AT ANY TIME IN %s\n\n"
+            "%s\n\n",
+            "*" * 80,
+            DEFAULT_DATA_DIR,
+            config_fpath,
+            DEFAULT_DATA_DIR,
+            config_fpath,
+            "*" * 80,
         )
         if not DEFAULT_DATA_DIR.exists():
             DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
